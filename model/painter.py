@@ -33,7 +33,7 @@ class Plotting:
     def __init__(self):
         pass
 
-    def plot_interesting_stuff(self, figure_name, output):
+    def plot_interesting_stuff(self, figure_name, output, save_path=None):
         ltc='red'
         plt.rcParams.update({'font.size': 5})
         time_axis_seconds=output['time_axis']
@@ -282,6 +282,8 @@ class Plotting:
         ax9b.locator_params(axis = 'y', nbins = 4)# (or axis = 'y') 
 
         plt.tight_layout(pad=0.5, w_pad=0.5, h_pad=0.5)
+        if save_path:
+            fig.savefig(save_path, dpi=200, bbox_inches='tight')
         plt.show()
 
     def plot_gen(self, fig, sub_plot_number, plot_list, plot_every_nth_point, **keyword_parameters):

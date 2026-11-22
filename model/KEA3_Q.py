@@ -14,6 +14,7 @@ from scipy import integrate
 from scipy import signal
 from IPython.display import display, HTML
 import csv
+import os
 import warnings
 
 from painter import Plotting
@@ -73,7 +74,7 @@ def f(t, y, pKreg, max_PSII, kQA, max_b6f, lumen_protons_per_turnover, PAR, ATP_
     triplet_yield, triplet_to_singletO2_yield, fraction_pH_effect, k_Fd_to_NADP, k_CBC, k_KEA, k_VCCN1, k_CLCE, k_NDH): 
     sun = sunshine()
     #The following are holders for paramters for testing internal functions of f
-    PAR = sun.light(t, 1200, LIGHT, FREQUENCY, 900, 100)
+    PAR = sun.light(t, 3600, LIGHT, FREQUENCY, 900, 100)
     light_per_L=0.84 * PAR/0.7
 
 
@@ -294,7 +295,7 @@ def do_complete_sim(y00, t_end, Kx):
     #Set up an array to contain the light curve (the PAR values), 
     light_curve=[]    
     for a_t in time_axis:
-        light_curve.append(sun.light(a_t, 1200, LIGHT, FREQUENCY, 900, 100))
+        light_curve.append(sun.light(a_t, 3600, LIGHT, FREQUENCY, 900, 100))
 
     # compute LEF array from Phi2 and light (does not consider recombination!)
     LEF_array_from_Phi2=[]
@@ -502,7 +503,7 @@ def process_a_gtype(gtype_dict, parameter_list, out_dict, gtype='a_genotype'):
         gtype_dict[para] = out_dict[para]#store in dictionary for further calculation
         gtype_df[para] = out_dict[para]
     
-    file_path = './logs/' + gtype + '_simulated.csv'
+    file_path = './logs_500/' + gtype + '_simulated.csv'
     gtype_df.to_csv(file_path)
    
 def sim_a_gtype(gtype_dict, gtype='WT', light = 100):  
@@ -529,11 +530,13 @@ def sim_a_gtype(gtype_dict, gtype='WT', light = 100):
     Kx.k_CBC = k_CBC_light
     constants_dict[on]=Kx #store constants in constants_dict
 
-    output_dict=sim_ivp(Kx, initial_sim_state_list, 1200)
+    output_dict=sim_ivp(Kx, initial_sim_state_list, 3600)
     Changed_Constants_Table('Change Constants', Kx_initial, Kx)
     output_dict['qL'] = 1-output_dict['QAm']
     paint = Plotting()
-    paint.plot_interesting_stuff(gtype, output_dict)
+    paint.plot_interesting_stuff(
+        gtype, output_dict,
+        save_path='./logs_500/' + gtype + '_' + str(light) + 'uE.png')
     # plot_interesting_stuff(gtype, output_dict)
     process_a_gtype(gtype_dict,parameters_of_interest, output_dict,gtype+'_'+str(light)+'uE')    
 
@@ -559,16 +562,18 @@ def do_stuff(LIGHT):
     fig = plt.figure(num=3, figsize=(5,4), dpi=200)
     plt.plot(time_min[1:],delta_NPQ[1:],label = '∆NPQ: kea3 - WT')
     plt.legend()
+    fig.savefig('./logs_500/delta_NPQ_' + str(LIGHT) + 'uE.png', dpi=200, bbox_inches='tight')
     plt.show()
     plt.close()
     fig = plt.figure(num=3, figsize=(5,4), dpi=200)
     plt.plot(time_min[1:],delta_LEF[1:],label = '∆LEF: kea3 - WT')
     plt.legend()
+    fig.savefig('./logs_500/delta_LEF_' + str(LIGHT) + 'uE.png', dpi=200, bbox_inches='tight')
     plt.show()
     plt.close()
     pdindex =pd.Index(WT['time_axis'], name = 'time/s')
     df_NPQ = pd.DataFrame(df_, index = pdindex)
-    file_path = './logs/' + 'delta_NPQ_LEF' + str(LIGHT) + '_uE_simulated.csv'
+    file_path = './logs_500/' + 'delta_NPQ_LEF' + str(LIGHT) + '_uE_simulated.csv'
     df_NPQ.to_csv(file_path) 
     plt.show()
     plt.close()
@@ -579,7 +584,9 @@ def do_stuff(LIGHT):
 global FREQUENCY, LIGHT, T_ATP
 FREQUENCY = 1/60
 result_dict = {}
-light_T = [(50, 200), (100, 165), (250, 100), (500, 60), (1000, 40)]
+# light_T = [(50, 200), (100, 165), (250, 100), (500, 60), (1000, 40)]
+light_T = [(500, 60)]
+os.makedirs('./logs_500', exist_ok=True)
 for LIGHT, T_ATP in light_T:
     delta = do_stuff(LIGHT)
     result_dict[LIGHT] = delta
