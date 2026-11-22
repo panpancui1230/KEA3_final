@@ -14,6 +14,7 @@ from scipy import integrate
 from scipy import signal
 from IPython.display import display, HTML
 import csv
+import os
 
 
 
@@ -3278,7 +3279,7 @@ def process_a_gtype(gtype_dict, parameter_list, out_dict, gtype='a_genotype'):
         #this slice is due to too many data points at transition from dark to light, & light to dark
         gtype_df[para] = out_dict[para]
     #list_to_csv(gtype_list, gtype+'_simulated.csv')
-    gtype_df.to_csv(gtype+'_simulated.csv')
+    gtype_df.to_csv('./logs_ref/' + gtype + '_simulated.csv')
 
 #the following function simulate a specific genotype, change ATPase activation function   
 def sim_a_gtype(gtype_dict, gtype='WT', light = 100):  
@@ -3389,7 +3390,7 @@ def do_stuff(LIGHT):
     pdindex =pd.Index(WT['time_axis'], name = 'time/s')
     df_NPQ = pd.DataFrame(df_, index = pdindex)
     # #list_to_csv(df_list,str(1/FREQUENCY)+'df_NPQ_sin_500_simulated.csv')
-    df_NPQ.to_csv('delta_NPQ_LEF'+str(LIGHT)+'_uE_simulated.csv')
+    df_NPQ.to_csv('./logs_ref/delta_NPQ_LEF' + str(LIGHT) + '_uE_simulated.csv')
     plt.show()
     plt.close()
     
@@ -3402,6 +3403,7 @@ global FREQUENCY, LIGHT, T_ATP
 FREQUENCY = 1/60
 result_dict = {}
 light_T = [(50, 200), (100, 165), (250, 100), (500, 60), (1000, 40)]
+os.makedirs('./logs_ref', exist_ok=True)
 for LIGHT, T_ATP in light_T:
     delta = do_stuff(LIGHT)
     result_dict[LIGHT] = delta
