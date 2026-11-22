@@ -25,6 +25,14 @@
 │   │   ├── kea3_250uE_simulated.csv
 │   │   ├── kea3_500uE_simulated.csv
 │   │   └── kea3_50uE_simulated.csv
+│   ├── logs_500（500 µE、1 小时光照的结果）
+│   │   ├── WT_500uE.png
+│   │   ├── WT_500uE_simulated.csv
+│   │   ├── kea3_500uE.png
+│   │   ├── kea3_500uE_simulated.csv
+│   │   ├── delta_NPQ_500uE.png
+│   │   ├── delta_LEF_500uE.png
+│   │   └── delta_NPQ_LEF500_uE_simulated.csv
 │   ├── painter.py
 │   ├── sun_sim.py
 │   └── utils.py
@@ -64,6 +72,8 @@ pip install numpy, matplotlib, scipy, pandas, copy
 cd ./model
 python KEA3_Q.py
 ```
+
+当前优化版按 500 µE、光照 1 小时运行，CSV 和图片写到 `./model/logs_500/`。
 
 运行原始版：
 
