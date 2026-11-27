@@ -546,6 +546,8 @@ def do_stuff(LIGHT):
     sim_a_gtype(WT, 'WT', LIGHT)
     kea3 ={}
     sim_a_gtype(kea3, 'kea3', LIGHT)
+    vccn1 = {}
+    sim_a_gtype(vccn1, 'vccn1', LIGHT)
     time_min = WT['time_axis']/60
     idx = np.argwhere(time_min == 2)[0][0]
     
